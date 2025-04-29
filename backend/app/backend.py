@@ -182,8 +182,12 @@ def getUserInfo():
                 print(indDay)
                 for route in indDay['routes']:
                     # print("INSIDE EMBEDDED")
-                    ori_lat,ori_lng = getLocationCoordinates(route['departLocation'])
-                    dest_lat, dest_lng = getLocationCoordinates(route['arrivalLocation'])
+                    try:
+                        ori_lat,ori_lng = getLocationCoordinates(route['departLocation'])
+                        dest_lat, dest_lng = getLocationCoordinates(route['arrivalLocation'])
+                    except Exception as e:
+                        return jsonify({'error': str(e)}), 500
+                    
                     duration,distance = getRoute(ori_lat,ori_lng,dest_lat,dest_lng)
                     # print("AFTER INITIAL CALLS")
                     route['arrivalTime'] = calculateArrival(route['departTime'], duration)
@@ -585,7 +589,7 @@ def getLocationCoordinates(locationName):
 
     # data = request.json
     address = locationName
-    # print(address)
+    print(address)
     #this will be the address with the special characters replaced with their counterparts for web encoding
     address_string = replaceSpecialCharacters(address)
 
@@ -595,17 +599,21 @@ def getLocationCoordinates(locationName):
     #get call and load it in with json
     response = get(baseURL+string)
     json_results = json.loads(response.content)
-    #print(json_results)
-
+    for result in json_results['results'][0]:
+        print(result)
+        print(json_results['results'][0][result])
+        # for subresult in result:
+        #     print(f'          {subresult}')
     #TODO---> IMPLEMENT EMPTY RESPONSE CASE
 
     '''this parses the response fully so that we get the accurate latitude and longitude
      there are various possible coordinates that are usable so this was to be as specific as possible
      location_coords is a map with two elements now --> {latitude: x.x, longitude: x.x} '''
-    location_coords = json_results['results'][0]['navigation_points'][0]['location']
+    location_coords = json_results['results'][0]['geometry']['location']
+    print(location_coords)
 
-    latitude = location_coords['latitude']
-    longitude = location_coords['longitude']
+    latitude = location_coords['lat']
+    longitude = location_coords['lng']
 
     return (latitude,longitude)
     #print(f"{latitude}   {longitude}")
