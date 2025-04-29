@@ -6,7 +6,43 @@ import CommuteScheduleRoute from "../Components/Schedule/CommuteScheduleRoute";
 export default function Friends() {
   const [friendsData, setFriendsData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [friendsRoutes, setFriendsRoutes] = useState({});
+  const [userNameSearch, setUserSearch] = useState('');
+  const [searchResults, setSearchResult] = useState([]);
+
+  const handleSearch = async () => {
+    console.log("Search Button Clicked")
+    // let path = `/friends`; 
+    if (userNameSearch.length == 0) {
+        // Array is empty
+        setIsValid(false)
+
+    }else{
+        // navigate(path);
+        const trieRes = await getTrieData();
+        console.log("RECIEVED TRIE DATA")
+        console.log(trieRes);
+        setSearchResult(trieRes);
+    }
+    
+    };
+
+  async function getTrieData(){
+    let response = await fetch(`http://127.0.0.1:5000//getFriendsAuto?userSearch=${userNameSearch}`, {
+      method: "GET",
+      mode: 'cors',
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+    
+    let res = await response.json();
+    console.log(res);
+    return res;
+  }
+
+  
+
 
   useEffect(() => {
     async function fetchFriends() {
@@ -101,7 +137,11 @@ export default function Friends() {
                 id="username-input"
                 name="friend_username"
                 placeholder="Enter Username Here"
+                value={userNameSearch}
+                onChange={(e) => setUserSearch(e.target.value)}
               />
+              <button id="search-friend"
+                      onClick= {handleSearch}>Search</button>
               <button id="add-friend">Add Friend +</button>
             </div>
             <div className="friends">

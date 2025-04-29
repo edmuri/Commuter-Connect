@@ -50,7 +50,7 @@ class User:
         self.first_name = None
         self.last_name = None
         self.password = None
-        self.routes = {}
+        self.routes = []
         return  
     def assign_values(self,dictionary)->None:
         # print( "HELLO")
@@ -60,24 +60,82 @@ class User:
         self.first_name = dictionary.get('first_name')
         self.last_name = dictionary.get('last_name')
         self.password = dictionary.get('password')
-        self.routes = dictionary.get('routes')
+        # self.routes = dictionary.get('routes')
         return
 
 class PlaceNode:
-    def __init__(self,dist,dict)->None:
-        self.left = None
-        self.right = None
+    def __init__(self,dist,dict=None,left=None,right=None)->None:
+        self.left = left
+        self.right = right
         self.dist = dist
         self.map = dict
         return
     def __lt__(self,other):
         return self.dist<other.dist
 
+class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.is_end_of_word = False
+        self.username = None  # Store just the username at end nodes
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, username):
+        """
+        Inserts a username into the Trie.
+        """
+        node = self.root
+        for char in username.lower():
+            if char not in node.children:
+                node.children[char] = TrieNode()
+            node = node.children[char]
+        node.is_end_of_word = True
+        node.username = username  # Store the original username (preserving case)
+
+    def search(self, prefix):
+        """
+        Returns a list of usernames matching the prefix for autocomplete.
+        """
+        node = self.root
+        for char in prefix.lower():
+            if char not in node.children:
+                return []  # Prefix not found
+            node = node.children[char]
+        
+        # Collect all usernames that match the prefix
+        results = []
+        self._collect_usernames(node, results)
+        return results
+
+    def _collect_usernames(self, node, results):
+        """
+        Recursively collects all usernames from this node downward.
+        """
+        if node.is_end_of_word and node.username:
+            results.append(node.username)
+        
+        for child in node.children.values():
+            self._collect_usernames(child, results)
+
+    def exact_search(self, username):
+        """
+        Returns True if the exact username exists in the trie.
+        """
+        node = self.root
+        for char in username.lower():
+            if char not in node.children:
+                return False
+            node = node.children[char]
+        
+        return node.is_end_of_word
 
 
 UserStructure = User()
-Routes = {}
-Trie={}
+Routes = []
+TrieTree = Trie()
 PlacesQueue = []
 
 @app.route('/')
@@ -106,14 +164,36 @@ def getUserInfo():
     doc = db.collection('Users').document(userID).get()
     
     #possibly incorporate a try catch
-    
+    # print("ALL GOOD")
     if doc.exists:
         doc_dict = doc.to_dict()
         userPassword = doc_dict.get('password',None)
-    
+        routes = db.collection('Users').document(userID).collection("routes").stream()
         # return jsonify(doc.to_dict())
         if userPassword == password:
+            #print(doc_dict)
+            # print(routes.to_dict())
+
             constructDataStructure(doc_dict)
+            # print("ALMOST")
+            count = 0
+            for day in routes:
+                indDay = day.to_dict()
+                print(indDay)
+                for route in indDay['routes']:
+                    # print("INSIDE EMBEDDED")
+                    ori_lat,ori_lng = getLocationCoordinates(route['departLocation'])
+                    dest_lat, dest_lng = getLocationCoordinates(route['arrivalLocation'])
+                    duration,distance = getRoute(ori_lat,ori_lng,dest_lat,dest_lng)
+                    # print("AFTER INITIAL CALLS")
+                    route['arrivalTime'] = calculateArrival(route['departTime'], duration)
+                    route['distance'] = convertToMiles(distance)
+
+                    hours, minutes = convert_seconds_to_hours_minutes(duration)
+                    route['duration'] = {'hours':hours,'minutes':minutes}
+                    route['day'] = indDay['day']
+                    addRouteToUser(route)
+            # print("STILL OKAY")
             populateRoutesMap()
             buildTrie()
             return jsonify({'Response': 'All good!'}),200
@@ -131,32 +211,16 @@ def constructDataStructure(dictionary):
      UserStructure.assign_values(dictionary)
      return
 
+def addRouteToUser(route_map):
+    UserStructure.routes.append(route_map)
+    return
+
 def populateRoutesMap():
     global Routes
 
     if(UserStructure.routes != None):
-        for route_name, route_map in UserStructure.routes.items():
-
-            duration,distance = getRoute(route_map['geoLocations']['origin']['lat'],
-                                        route_map['geoLocations']['origin']['lon'],
-                                        route_map['geoLocations']['dest']['lat'],
-                                        route_map['geoLocations']['dest']['lon'])
-            
-            arrivalTime = calculateArrival(route_map['Depart'], duration)
-            distance = convertToMiles(distance)
-
-            route = {
-                'Title': route_map['Title'],
-                'Origin': route_map['geoLocations']['origin']['address'],
-                'Dest': route_map['geoLocations']['dest']['address'],
-                'Depart': route_map['Depart'],
-                'Buddies': route_map['Commuter_Buddies'],
-                'Arrive':arrivalTime,
-                'Dist':distance,
-                'Durr':duration
-            }
-
-            Routes[route_map['Title']] = route
+        for route_map in UserStructure.routes:
+            Routes.append(route_map)
     return
     
 @app.route('/getFriends',methods=['GET'])
@@ -254,17 +318,6 @@ def saveUserChanges():
 
     tempRoutes = []
     tempRoutes = UserStructure.routes
-
-    
-    # if(data['username']!=OriginalUserID):
-    #     newUser = data['username']
-    # else:
-    #     newUser = OriginalUserID
-
-    # if(data['email'] != UserStructure.email):
-    #     newEmail = data['email']
-    # else:
-    #     newEmail = UserStructure.email
 
     newUser = OriginalUserID
     newEmail = UserStructure.email
@@ -368,8 +421,18 @@ def addRoute():
         print(f"Error in addRoute: {str(e)}")
         return jsonify({'Message': f'Server error: {str(e)}'}), 500
 
+@app.route('/getFriendsAuto',methods=['GET'])
+def getFriendsAuto():
+    userRequest = request.args.get('userSearch')
+    print(userRequest)
+    result = TrieTree.search(userRequest)
 
+    if(result != None):
+        return jsonify({'Result':result})
+    else:
+        return jsonify({'Result':'NONE FOUND'})
 
+#gets routes for that single day
 @app.route('/getUsersRoutes', methods = ['GET'])
 def getUsersRoutes():
     try:
@@ -387,6 +450,33 @@ def getUsersRoutes():
         # Get the specific route document for today
         route_ref = db.collection('Users').document(userID).collection('routes').document(today)
         route_doc = route_ref.get()
+
+        print(route_doc.to_dict())
+        print('\n\n')
+
+
+        #  duration,distance = getRoute(route_map['geoLocations']['origin']['lat'],
+        #                                 route_map['geoLocations']['origin']['lon'],
+        #                                 route_map['geoLocations']['dest']['lat'],
+        #                                 route_map['geoLocations']['dest']['lon'])
+            
+        #     arrivalTime = calculateArrival(route_map['Depart'], duration)
+        #     distance = convertToMiles(distance)
+
+        #     route = {
+        #         'Title': route_map['Title'],
+        #         'Origin': route_map['geoLocations']['origin']['address'],
+        #         'Dest': route_map['geoLocations']['dest']['address'],
+        #         'Depart': route_map['Depart'],
+        #         'Buddies': route_map['Commuter_Buddies'],
+        #         'Arrive':arrivalTime,
+        #         'Dist':distance,
+        #         'Durr':duration
+        #     }
+
+        routes = route_doc.to_dict()
+        #for route in routes['routes']:
+           # route['arrivalTime']
         
         if route_doc.exists:
             # Return just today's route
@@ -493,9 +583,9 @@ def getLocationCoordinates(locationName):
     #baseURL take from the website that will allow us to build call
     baseURL = "https://maps.googleapis.com/maps/api/geocode/json?"
 
-    data = request.json
+    # data = request.json
     address = locationName
-
+    # print(address)
     #this will be the address with the special characters replaced with their counterparts for web encoding
     address_string = replaceSpecialCharacters(address)
 
@@ -592,7 +682,7 @@ def getRoute(lat_origin,lon_origin,lat_dest,lon_dest):
     }
 
     response = post(baseURL,headers=headers,data=json.dumps(query_string))
-    print(response.status_code)
+    # print(response.status_code)
     json_results = json.loads(response.content)
 
     duration = json_results['routes'][0]['duration']
@@ -600,7 +690,9 @@ def getRoute(lat_origin,lon_origin,lat_dest,lon_dest):
     return (duration,distance)
 
 def calculateArrival(depart,duration):
-
+    depart = depart.replace("A","")
+    depart = depart.replace("P","")
+    depart = depart.replace("M","")
     index = depart.find(':')
 
     hour = int(depart[:index])
@@ -620,26 +712,65 @@ def calculateArrival(depart,duration):
 
     return arrival_time
 
+def convert_seconds_to_hours_minutes(secondString):
+    seconds = int(secondString.replace('s',""))
+    hours = seconds // 3600
+    remaining_seconds = seconds % 3600
+    minutes = remaining_seconds // 60
+    return hours, minutes
+
 def convertToMiles(distance):
     miles = distance / 1609.344
     return miles
 
-@app.route('/buildPQ',methods=['GET'])
+@app.route('/buildPQ',methods=['POST'])
 def getPlacesPQ():
-    locations = request.json
-    print(locations)
-    #getPlaces(locationTypes)
+    # da = request.json()
+    PlacesQueue.clear()
+    data =  request.get_json()
+    locs = data.get('locs')
+    print(locs)
+    locationsArray = compressArray(locs)
+    # print(locationsArray)
+    getPlaces(locationsArray)
 
+    return jsonify({'Message':'allGood'})
 
-    return
+def compressArray(array):
+    tmp = []
+    for index in array:
+        tmp.append(index)
+    return tmp
 
-@app.route('/getPlaces',methods=['GET'])
+def collectPlaces(node, places):
+    if node is None:
+        return
+
+    # Only add if the node is a leaf
+    if node.left is None and node.right is None:
+        if node.map is not None and node.map != {}:
+            places.append(node.map)
+    
+    collectPlaces(node.left, places)
+    collectPlaces(node.right, places)
+
+@app.route('/getPlaces', methods=['GET'])
 def getPlacesArray():
     PlacesArray = []
-    while(len(PlacesQueue)>0):
-        node = heapq.heappop(PlacesQueue)
-        PlacesArray.append(node)
-    return jsonify({'Places':PlacesArray})
+    if PlacesQueue:  # Check if queue is not empty
+        root = PlacesQueue[0]  # Get the root node
+        collectPlaces(root, PlacesArray)
+     # Remove duplicates
+    unique_places = []
+    seen = set()
+
+    for place in PlacesArray:
+        place_key = str(place)  # Or better: place['name'] if possible
+        if place_key not in seen:
+            unique_places.append(place)
+            seen.add(place_key)
+
+    return jsonify({'Places': unique_places})
 
 def getPlaces(locationTypes):
     global PlacesQueue
@@ -652,6 +783,29 @@ def getPlaces(locationTypes):
     #bus station  -> bus_station
     #train station > train_station
 
+    # : bus, train, groceries, cafe, fast, library
+    locations = []
+
+    if locationTypes == None:
+        locations = ["cafe","library", "bus_station","train_station","grocery_store","fast_food_restaurant"]
+    else:
+        for types in locationTypes:
+            if types == 'bus':
+                locations.append('bus_station')
+            elif types == 'cafe':
+                locations.append('cafe')
+            elif types == 'groceries':
+                locations.append('grocery_store')
+            elif types == 'fast':
+                locations.append('fast_food_restaurant')
+            elif types == 'train':
+                locations.append('train_station')
+            elif types == 'library':
+                locations.append('library')
+
+    # if len(locationTypes) == 0:
+    #     locations = ["cafe","library", "bus_station","train_station","grocery_store","fast_food_restaurant"]
+    # print(locations)
     origin_lat = 41.8719456
     origin_lng = -87.6474381
 
@@ -662,7 +816,7 @@ def getPlaces(locationTypes):
     }
 
     query_string={
-        "includedTypes": ["cafe","library", "bus_station","train_station","grocery_store","fast_food_restaurant"],
+        "includedTypes": locations,
         "maxResultCount": 20, #range from 1-20
         # "rankPreference": "DISTANCE",
         "locationRestriction": {
@@ -675,7 +829,7 @@ def getPlaces(locationTypes):
   }
     }
     response = post(baseURL,headers=headers,data=json.dumps(query_string))
-    print(response.status_code)
+    # print(response.status_code)
     json_results = json.loads(response.content)
 
     places = json_results['places']
@@ -706,27 +860,34 @@ def getPlaces(locationTypes):
         heapq.heappush(PlacesQueue,PlaceNode(distance*100,placeInfo))
         #print(f"{placeInfo}\n")
 
-        heapq.heapify(PlacesQueue)
+    heapq.heapify(PlacesQueue)
 
-        while(len(PlacesQueue)!=1):
-            leftNode = heapq.heappop(PlacesQueue)
-            rightNode = heapq.heappop(PlacesQueue)
+    while(len(PlacesQueue)!=1):
+        leftNode = heapq.heappop(PlacesQueue)
+        rightNode = heapq.heappop(PlacesQueue)
+        # print("INSIDE WHILE LOOP")
+        parentNode = PlaceNode(leftNode.dist+rightNode.dist)
+        parentNode.left = leftNode
+        parentNode.right = rightNode
 
-            parentNode = heapq.heappop(PlacesQueue)
-            parentNode.left = leftNode
-            parentNode.right = rightNode
-
-            heapq.heappush(PlacesQueue,parentNode)
+        heapq.heappush(PlacesQueue,parentNode)
     return
 
 def accessUsers():
     docs = db.collection('Users').stream()
-
-    for doc in docs:
-        print(doc.id)
-    return
+    users = []
+    for names in docs:
+        users.append(names.id)
+    return users
 
 def buildTrie():
+    global TrieTree
+
+    users = accessUsers()
+
+    for user in users:
+        TrieTree.insert(user)
+
     return
 
 @app.route('/getMap', methods=['GET'])

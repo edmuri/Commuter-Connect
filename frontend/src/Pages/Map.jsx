@@ -20,10 +20,13 @@ export default function Map() {
 
   const toggleItem = (item, list, setList) => {
     if (list.includes(item)) {
-      setList(list.filter((i) => i !== item));
+      setList(list.filter((i) => i !== item)); // remove it
+      setLocations(locations.filter((i) => i !== item));
     } else {
-      setList([...list, item]);
+      setList([...list, item]); // add it
+      setLocations([...locations,item]);
     }
+    fetchPlaces();
   };
 
   const updateLocations = (e) => {
@@ -35,12 +38,22 @@ export default function Map() {
     updateLocations(item);
   };
 
-  useEffect(() => {
+
+    // const [locations, setLocations] = React.useState([]);
+
+    // Function to add a new location string to the array
+    // const addLocation = (newLocationString) => {
+    //   setLocations(prevLocations => [...prevLocations, newLocationString]);
+    // };
+  
+    useEffect(() => {
+      fetchPlaces();
+    }, []);
+
     async function fetchPlaces() {
       try {
         await buildPQ();
         const data = await loadPlaces();
-        console.log(data);
         setPlacesData(data);
       } catch (error) {
         console.error("Error loading places:", error);
@@ -49,20 +62,47 @@ export default function Map() {
       }
     }
 
-    fetchPlaces();
-  }, []);
+    async function buildPQ(){
 
-  async function buildPQ() {
-    let response = await fetch(`http://127.0.0.1:5000/buildPQ`, {
-      method: "POST",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        // body: JSON.stringify(locations)
-      },
-    });
-  }
+      console.log(locations);
+
+      let response = await fetch(`http://127.0.0.1:5000/buildPQ`, {
+        method: "POST",
+        mode: 'cors',
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+          body: JSON.stringify({'locs':locations}),
+      });
+    }
+  
+    async function loadPlaces() {
+      let response = await fetch(`http://127.0.0.1:5000/getPlaces`, {
+        method: "GET",
+        mode: 'cors',
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+      
+      let data = await response.json();
+      console.log(data);
+      return data;
+    }
+
+  // async function buildPQ() {
+  //   let response = await fetch(`http://127.0.0.1:5000/buildPQ`, {
+  //     method: "POST",
+  //     mode: "cors",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Accept: "application/json",
+  //       body: JSON.stringify({'locs':locations})
+  //     },
+  //   });
+  // }
 
   async function loadPlaces() {
     let response = await fetch(`http://127.0.0.1:5000/getPlaces`, {

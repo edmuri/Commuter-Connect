@@ -41,7 +41,7 @@ const Login = () => {
         console.log(data);
 
         let responseMessage = data['Response'];
-
+        console.log(responseMessage);
         if(responseMessage == "All good!"){
             navigate(path);
             setIsValid(false);
