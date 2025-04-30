@@ -82,14 +82,14 @@ const RouteMarkers = ({ departure, arrival }) => {
       <AdvancedMarker
         position={arrivalPoint.location}
       >
-        <Pin background="#4CAF50" glyphColor="#FFF" borderColor="#000" />
+        <Pin background="#7D91B8" glyphColor="#FFF" borderColor="#000" />
       </AdvancedMarker>
       
       {/* Arrival Marker with red color */}
       <AdvancedMarker
         position={departurePoint.location}
       >
-        <Pin background="#F44336" glyphColor="#FFF" borderColor="#000" />
+        <Pin background="#5D576A" glyphColor="#FFF" borderColor="#000" />
       </AdvancedMarker>
       
       {/* Info window for selected point */}
