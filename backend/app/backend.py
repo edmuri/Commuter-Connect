@@ -223,10 +223,10 @@ def populateRoutesMap():
     global Routes
     if(UserStructure.routes != None):
         for route_name, route_map in UserStructure.routes.items():
-
-    if(UserStructure.routes != None):
-        for route_map in UserStructure.routes:
-            Routes.append(route_map)
+    
+            if(UserStructure.routes != None):
+                for route_map in UserStructure.routes:
+                    Routes.append(route_map)
     return
     
 @app.route('/getFriends',methods=['GET'])
