@@ -221,12 +221,10 @@ def addRouteToUser(route_map):
 
 def populateRoutesMap():
     global Routes
+
     if(UserStructure.routes != None):
-        for route_name, route_map in UserStructure.routes.items():
-    
-            if(UserStructure.routes != None):
-                for route_map in UserStructure.routes:
-                    Routes.append(route_map)
+        for route_map in UserStructure.routes:
+            Routes.append(route_map)
     return
     
 @app.route('/getFriends',methods=['GET'])
@@ -782,14 +780,6 @@ def getPlacesArray():
 
     return jsonify({'Places': unique_places})
 
-@app.route('/getPlaces',methods=['GET'])
-def getPlacesArray():
-    PlacesArray = []
-    while(len(PlacesQueue)>0):
-        node = heapq.heappop(PlacesQueue)
-        PlacesArray.append(node)
-    return jsonify({'Places':PlacesArray})
-
 def getPlaces(locationTypes):
     global PlacesQueue
     baseURL = "https://places.googleapis.com/v1/places:searchNearby"
@@ -1032,6 +1022,7 @@ def setCommunityEvents():
 @app.route('/deleteSpecificCommunityEvent', methods=['POST'])
 def deleteSpecificCommunityEvent():
     try:
+
         event_id = request.args.get('id')
 
         if not event_id:

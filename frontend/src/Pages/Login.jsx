@@ -19,7 +19,7 @@ const Login = () => {
 
         }else{
             navigate(path);
-            // loadUserSettings()
+            loadUserSettings()
         }
         
     };
