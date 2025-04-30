@@ -25,7 +25,12 @@ const Login = () => {
     };
 
     async function loadUserSettings(){
-        let path = `/schedule?prop=${email}`; 
+
+        let path = `/schedule`; 
+
+        if(email === "UIC_Admin"){
+            path = `/nearby`; 
+        }
 
         let response = await fetch(`http://127.0.0.1:5000/getUserInfo?userID=${email}&password=${password}`,{
             method:'GET',

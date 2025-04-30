@@ -13,7 +13,7 @@ const NavLinks = () => {
             <a href="/map">Map</a>
           </li>
           <li>
-            <a href="/nearby">Nearby</a>
+            <a href="/nearby">Events</a>
           </li>
           <li>
             <a href="/friends">Friends</a>

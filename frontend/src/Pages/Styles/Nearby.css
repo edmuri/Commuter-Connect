@@ -64,6 +64,12 @@
     cursor: pointer;
 }
 
+#TOD:hover{
+    background-color: rgba(19, 185, 226, 0.596);
+}
+
+
+
 #eventTime{
     width: 170px;
     height: 40px;
@@ -125,6 +131,7 @@
     width: 50px;
     height: 50px;
     border-radius: 50px;
+   
 }
 
 #colors{
@@ -159,10 +166,32 @@
     cursor: pointer;
 }
 
+#deleteEventButton{
+    padding: 10px 30px 10px 30px;
+    font-size: 20px;
+    border-radius: 20px;
+    background-color: #b96060;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+}
+
 .bigComponentForCreateEvent{
     display: flex;
     flex-direction: column;
     gap: 20px;
+}
+
+.eventCard{
+    transition: transform .2s; /* Animation */
+}
+
+.eventCard:hover{
+    transform: scale(1.05); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+}
+
+.eventCard:active{
+    transform: scale(1); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
 }
 
 @media (max-width: 1092px){
