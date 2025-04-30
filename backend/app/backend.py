@@ -221,6 +221,8 @@ def addRouteToUser(route_map):
 
 def populateRoutesMap():
     global Routes
+    if(UserStructure.routes != None):
+        for route_name, route_map in UserStructure.routes.items():
 
     if(UserStructure.routes != None):
         for route_map in UserStructure.routes:
@@ -779,6 +781,14 @@ def getPlacesArray():
             seen.add(place_key)
 
     return jsonify({'Places': unique_places})
+
+@app.route('/getPlaces',methods=['GET'])
+def getPlacesArray():
+    PlacesArray = []
+    while(len(PlacesQueue)>0):
+        node = heapq.heappop(PlacesQueue)
+        PlacesArray.append(node)
+    return jsonify({'Places':PlacesArray})
 
 def getPlaces(locationTypes):
     global PlacesQueue

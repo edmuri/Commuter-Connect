@@ -64,7 +64,7 @@ export default function BusArrivals() {
   return (
     <div>
       <div>
-        <h2>Choose Bus Routes</h2>
+        <h2 className="page-title">Incoming Buses</h2>
         <div className="choose-bus-route">
           {routes.map((rt) => (
             <label key={rt} style={{ marginRight: "1rem" }} className="bus-check-label">

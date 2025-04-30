@@ -21,10 +21,9 @@ export default function Map() {
   const toggleItem = (item, list, setList) => {
     if (list.includes(item)) {
       setList(list.filter((i) => i !== item)); // remove it
-      setLocations(locations.filter((i) => i !== item));
+      setLocations(locations.filter((i) => i !== item)); // remove it
     } else {
       setList([...list, item]); // add it
-      setLocations([...locations,item]);
     }
     fetchPlaces();
   };
@@ -123,31 +122,32 @@ export default function Map() {
     <>
       <NavBar />
       <div id="map-section">
-        <div id="map-header">
-          <div id="map-title-container">
-            <div id="map-title">
-              <h1>Maps</h1>
-              <p>
-                View nearby stations and food and study spots for your
-                convenience!
-              </p>
-            </div>
-            <div id="vl"></div>
-          </div>
-
-          <div id="map-options">
-            <div id="stations" className="grid-item">
-              <h3>Stations</h3>
-              <ul>
-                <li
-                  id="bus-stations"
-                  className={activeStations.includes("bus") ? "active" : ""}
-                  onClick={() =>
-                    handleClick("bus", activeStations, setActiveStations)
-                  }
-                >
-                  Bus Stations
-                </li>
+      <div id="map-header">
+      <div id="map-title-container">
+        <div id="map-title">
+          <h1>Maps</h1>
+          <p>
+            View nearby stations and food and study spots for your convenience!
+          </p>
+          
+        </div>
+        <div id="vl"></div>
+        
+        </div>
+        
+        <div id="map-options">
+          <div id="stations" className="grid-item">
+            <h3>Stations</h3>
+            <ul>
+              <li
+                id="bus-stations"
+                className={activeStations.includes("bus") ? "active" : ""}
+                onClick={() =>
+                  toggleItem("bus", activeStations, setActiveStations)
+                }
+              >
+                Bus Stations
+              </li>
 
                 <li
                   id="train-stations"
@@ -225,6 +225,7 @@ export default function Map() {
           <GoogleMap />
         </div>
       </div>
+      
     </>
   );
 }

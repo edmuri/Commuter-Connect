@@ -18,8 +18,8 @@ const Login = () => {
             setIsValid(false)
 
         }else{
-            // navigate(path);
-            loadUserSettings()
+            navigate(path);
+            // loadUserSettings()
         }
         
     };

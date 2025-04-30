@@ -43,20 +43,38 @@ export default function TrainArrivals() {
     <div>
       <h2>Incoming Trains at UIC-Halsted 🚆</h2>
       {arrivals.length === 0 ? (
-        <p>No incoming trains at this time. 🚋</p>
+        <p>No incoming trains at this time.</p>
       ) : (
-        <ul>
+        <ul classname="train-predictions">
           {arrivals.map((train, index) => {
             const minutesAway = getMinutesAway(train.arrT);
             return (
               <li key={index}>
-                {train.staNm}
-                Towards {train.destNm} — {minutesAway <= 0 ? "Arriving now" : `Arriving in ${minutesAway} min`} ({train.rt})
+                
+                <div>
+                  <strong>{train.rt} {train.destNm}</strong>{" "}
+                </div>
+                <em>{minutesAway <= 0 ? "Due" : `${minutesAway} min`}</em>
               </li>
             );
           })}
         </ul>
       )}
     </div>
+    
   );
 }
+
+// <ul className="bus-predictions">
+//           {sortedItems.slice(0,10).map((p, i) => (
+//             <li key={i}>
+//               <div>
+//                 <strong>
+//                   {p.rt} {formatDirection(p.rtdir)}
+//                 </strong>{" "}
+//                 {p.stpnm}
+//               </div>
+//               <em>{formatArrivalTime(p.prdctdn)}</em>
+//             </li>
+//           ))}
+//         </ul>
