@@ -20,11 +20,10 @@ export default function Map() {
 
   const toggleItem = (item, list, setList) => {
     if (list.includes(item)) {
-      setList(list.filter((i) => i !== item));
-      setLocations(locations.filter((i) => i !== item));
+      setList(list.filter((i) => i !== item)); // remove it
+      setLocations(locations.filter((i) => i !== item)); // remove it
     } else {
-      setList([...list, item]);
-      setLocations([...locations,item]);
+      setList([...list, item]); // add it
     }
     fetchPlaces();
   };

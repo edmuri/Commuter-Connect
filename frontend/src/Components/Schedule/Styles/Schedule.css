@@ -125,6 +125,7 @@
 
 #newRouteButton,
 #button {
+  width: 30%;
   padding: 10px;
   border-radius: 20px;
   background-color: #769eb8;
@@ -152,18 +153,6 @@
   background-color: #5d576a;
   border: none;
   margin-top: 20px;
-}
-
-#cancel-button,
-#add-button {
-  min-width: fit-content;
-  border: none;
-  padding: 10px;
-  border-radius: 30px;
-}
-
-#add-button {
-  color: white;
 }
 
 #thisRoute {
@@ -202,7 +191,14 @@
   cursor: pointer;
 }
 
-
+#button {
+  width: 30%;
+  padding: 10px;
+  border-radius: 20px;
+  color: white;
+  border-color: #769eb8;
+  font-size: 15px;
+}
 
 #button:hover {
   transform: translateY(-2px);
@@ -606,6 +602,7 @@
 }
 
 #button {
+  width: 30%;
   padding: 10px;
   border-radius: 20px;
   color: white;

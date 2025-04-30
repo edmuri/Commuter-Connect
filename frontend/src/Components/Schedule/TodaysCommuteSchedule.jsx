@@ -527,19 +527,18 @@ const Schedule = () => {
 
                 <div id="buttonOptions">
                   <button
-                    id="cancel-button"
+                    id="button"
                     onClick={handleExit}
                     style={{
                       backgroundColor: "#EAEAEA",
                       color: "black",
                       borderColor: "#EAEAEA",
-                      
                     }}
                   >
                     Cancel
-                  </button >
+                  </button>
                   <button
-                    id="add-button"
+                    id="button"
                     onClick={handleAddRouteToDB}
                     style={{ backgroundColor: "#769EB8" }}
                   >

@@ -36,7 +36,6 @@ const CommuteRoute = ({
 
   const percentagePassed = ((totalTime - timeLeft) / totalTime) * 100;
 
-  // HANDLE DELETE
   const handleDelete = () => {
     setDeleteEvent(!deleteEvent);
   };
@@ -87,6 +86,7 @@ const CommuteRoute = ({
           </h3>
 
           <div
+            style={{ color: !isActive ? "rgba(0, 0, 0, 0.302)" : "black" }}
             className="route"
           >
             {/* NEED TO EDIT: ROUTE STATUS */}
