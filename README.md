@@ -1,6 +1,22 @@
-# Commuter Connect: Where Every Journey Meets Community.
+<img height=200 width=1000 src="./frontend/src/assets/train.svg">
 
-## About<!-- Required -->
+<h1 align="center">Commuter Connect: Where Every Journey Meets Community.</h1>  
+
+<div align="center">
+
+![Flask](https://img.shields.io/badge/flask-%23000.svg?style=for-the-badge&logo=flask&logoColor=white)
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
+![CSS](https://img.shields.io/badge/css-%23663399.svg?style=for-the-badge&logo=css&logoColor=white)
+![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
+![Firebase](https://img.shields.io/badge/firebase-a08021?style=for-the-badge&logo=firebase&logoColor=ffcd34)
+
+</div>
+
+---
+
+### About
 
 Commuter Connect is a web application built with React, Flask, Firebase, using data from Google Routes + Places API, designed to assist and connect commuter students at UIC (University of Illinois Chicago).
 
@@ -9,17 +25,16 @@ Many lack a reliable network to coordinate rides, share routes, or connect with 
 
 Our mission is to turn commuting into an opportunity for connection, convenience, and community.
 
-![ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/d45225ef-a660-4010-bca0-f31fa1cf9459)
-![2-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/76913d12-81c5-4ef1-9f22-173524794d83)
-![3-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/9346a6c3-df37-4533-b561-d3d9d3ae5d91)
-![4-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/47771db3-a6e6-4e8c-8694-949b362e451f)
-![5-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/9f8e13d7-fa55-49b5-8826-d5398996834b)
+<p align="center">
+<img src="./gif.gif">
+</p>
 
 
 ### Key Features
 
 *Create Route System:*
 Students can create and save their fastest commute routes using Google Maps' Routes and Places API, optimized with a priority queue for fastest paths.
+
 
 *Commute Buddy System:*
 Add friends to your commute routes to make traveling easier and more enjoyable.
@@ -30,16 +45,10 @@ Easily find and add friends using a Trie-based friend search system for fast and
 *Daily Commute Management:*
 View, edit, and manage your saved commute routes anytime.
 
-*User Authentication:*
-Secure login and registration system powered by Firebase Authentication to keep user data safe.
+<p align="center">
+<img src="./gif3.gif">
+</p>
 
-
-### Tools
-React, Flask, Firebase, Google Routes + Places APIs
-
-We used React Router for navigation between pages. 
-
-We chose Flask over Django because Flask is lightweight and flexible, making it perfect for our project where we needed a simple REST API backend. Flask allowed us to easily connect with Firebase services and handle API requests without the additional complexity of Django’s full-stack structure. Since our app focuses more on frontend-user interactions  and lightweight data transactions (routes, friends, authentication), Flask provided exactly the right balance of simplicity and power for our project scope. Finally, Flask provided a faster setup time and easier team collaboration for a mid-sized project.
 
 
 ## How to use this project<!-- Required -->
@@ -49,7 +58,7 @@ We chose Flask over Django because Flask is lightweight and flexible, making it 
 * and why to use this project.
 -->
 
-**LINK TO API KEYS: ** https://docs.google.com/document/d/1q31M4Fc75HLRCgkbx1FeDoGOIQiawCOuQS06W3nn134/edit?usp=sharing
+**LINK TO API KEYS:** https://docs.google.com/document/d/1q31M4Fc75HLRCgkbx1FeDoGOIQiawCOuQS06W3nn134/edit?usp=sharing
 
 ### 1. Creating your own Project Repository
 - Click on **Fork** to create your own repo and then click **Create Fork**.
@@ -68,130 +77,45 @@ We chose Flask over Django because Flask is lightweight and flexible, making it 
 - Go to your Forked Repository on Github, Click on green **Code** button and copy the URL (using HTTPS or SSH)
 - Open up VS Code and in the home page or under Source Control, click on **Clone a Repository**. Choose a directory to store your project on your local computer. You can also do the same from the *command line* using `git clone REPO_URL`
 - You will now see a local version of all the files/source code from GitHub. 
+
 ### a. Set up Backend
-- Move into the backend directory - `cd backend` 
-- Create a new virtual environment - `python -m venv env`
-- Activate the virtual environment
-    - For Windows : `.\env\Scripts\activate`
-    - For Mac : `source env/bin/activate`
-- You will now see a (venv) infront of your command line
-- To install all dependencies and packages, run `pip install -r requirements.txt`
-- **Note:** To deactivate, run `env\Scripts\deactivate.bat` or `deactivate`
-- Run `cd app` 
-- Run `set FLASK_APP=server.py` to set the flask app
-- Run the flask backend in debug mode for automatic reloading : `flask --app server.py --debug run`
-
-### b. Set up Frontend
-- Open up a new terminal + button on top right of the terminal and run `cd frontend`
-- Install all packages by running `npm install`
-- To run the react frontend, `npm run dev`
-
-
-## Demo<!-- Required -->
-<!-- 
-* You can add a demo here GH supports images/ GIFs/videos 
-* 
-* It's recommended to use GIFs as they are more dynamic
--->
+Windows:  
+```bash
+    cd backend
+    python -m venv env
+    .\env\Scripts\activate
+    pip install -r requirements.txt
+    cd app 
+    set FLASK_APP=server.py
+    flask --app server.py --debug run
+```  
+Mac:
+```bash
+    cd backend
+    python -m venv env
+    source env/bin/activate
+    pip install -r requirements.txt
+    cd app 
+    set FLASK_APP=server.py
+    flask --app server.py --debug run
+```  
+ **Note:** To deactivate, run `env\Scripts\deactivate.bat` or `deactivate`
 
 
-<!-- ## Table of Contents -->
-<!-- Optional -->
-<!-- 
-* This section is optional, yet having a contents table 
-* helps keeping your README readable and more professional.
-* 
-* If you are not familiar with HTML, no worries we all been there :D 
-* Review learning resources to create anchor links. 
--->
+### b. Set up Frontend  
+- Open up a new terminal
+```bash
+    cd frontend
+    npm install
+    npm run dev
+```
+
+## Contributors
+[![Eddie](https://img.shields.io/badge/Eddie_Murillo-313030?style=for-the-badge&logo=github&logoColor=white)](https://github.com/edmuri)
+[![Flori](https://img.shields.io/badge/Florianne_Che-8414CF?style=for-the-badge&logo=github&logoColor=white)](https://github.com/cheetodustflori)
+[![Zeel](https://img.shields.io/badge/Zeel_Patel-147ECF?style=for-the-badge&logo=github&logoColor=white)](https://github.com/zpate6)
 
 
-<dev align="center">
-    <table align="center">
-        <tr>
-            <td><a href="#about">About</a></td>        
-            <td><a href="#how-to-use-this-project">Getting started</td>
-            <td><a href="#demo">Demo</a></td>
-            <td><a href="#project-roadmap--">Project Roadmap</a></td>
-            <td><a href="#documentation">Documentation</a></td>
-        </tr>
-        <tr>
-            <td><a href="#contributors">Contributors</a></td>
-            <td><a href="#acknowledgments">Acknowledgments</a></td>
-            <td><a href="#feedback">Feedback</a></td>
-            <td><a href="#contact">Contact</a></td>
-            <td><a href="#license">License</a></td>
-        </tr>
-    </table>
-</dev>
-
-
-<!-- - Use this html element to create a back to top button. -->
-<p align="right"><a href="#how-to-use-this-project">back to top ⬆️</a></p>
-
-
-<!-- ## Project Roadmap Optional --> <!-- add learning_Rs-->
-<!-- 
-* Add this section in case the project has different phases
-* 
-* Under production or will be updated.
--->
-
-
-<!-- - Use this html element to create a back to top button. -->
-<p align="right"><a href="#how-to-use-this-project">back to top ⬆️</a></p>
-
-
-
-<!-- ## Documentation Optional -->
-<!-- 
-* You may add any documentation or Wikis here
-* 
-* 
--->
-
-
-## Contributors<!-- Required -->
-<!-- 
-* Without contribution we wouldn't have open source. 
-* 
-* Generate github contributors Image here https://contrib.rocks/preview?repo=angular%2Fangular-ja
--->
-Eddie Murillo
-
-Florianne Che
-
-Zeel Patel
-
-<!-- ## Acknowledgments Optional -->
-<!-- 
-* Credit where it's do 
-* 
-* Feel free to share your inspiration sources, Stackoverflow questions, github repos, tools etc.
--->
-
-
-<!-- - Use this html element to create a back to top button. -->
-<p align="right"><a href="#how-to-use-this-project">back to top ⬆️</a></p>
-
-
-## Feedback<!-- Required -->
-<!-- 
-* You can add contacts information like your email and social media account 
-* 
-* Also it's common to add some PR guidance.
--->
-
-
-## Contact<!-- Required -->
-<!-- 
-* add your email and contact info here
-* 
-* 
--->
-Eddie Murillo: emuri@uic.edu
-Florianne Che: fche2@uic.edu
-Zeel Patel: zpate6@uic.edu
 
 <!--  ## License Optional -->
 <!-- 
@@ -199,7 +123,3 @@ Zeel Patel: zpate6@uic.edu
 * 
 * check this website for an easy reference https://choosealicense.com/)
 -->
-
-
-<!-- - Use this html element to create a back to top button. -->
-<p align="right"><a href="#how-to-use-this-project">back to top ⬆️</a></p>

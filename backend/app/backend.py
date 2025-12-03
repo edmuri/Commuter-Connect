@@ -173,7 +173,7 @@ def getUserInfo():
         if userPassword == password:
             #print(doc_dict)
             # print(routes.to_dict())
-
+            print("Hello")
             constructDataStructure(doc_dict)
             # print("ALMOST")
             count = 0
@@ -181,15 +181,15 @@ def getUserInfo():
                 indDay = day.to_dict()
                 print(indDay)
                 for route in indDay['routes']:
-                    # print("INSIDE EMBEDDED")
+                    print("INSIDE EMBEDDED")
                     try:
                         ori_lat,ori_lng = getLocationCoordinates(route['departLocation'])
                         dest_lat, dest_lng = getLocationCoordinates(route['arrivalLocation'])
                     except Exception as e:
                         return jsonify({'error': str(e)}), 500
-                    
+                    print("RIGHT BEFORE")
                     duration,distance = getRoute(ori_lat,ori_lng,dest_lat,dest_lng)
-                    # print("AFTER INITIAL CALLS")
+                    print("AFTER INITIAL CALLS")
                     route['arrivalTime'] = calculateArrival(route['departTime'], duration)
                     route['distance'] = convertToMiles(distance)
 
@@ -197,7 +197,7 @@ def getUserInfo():
                     route['duration'] = {'hours':hours,'minutes':minutes}
                     route['day'] = indDay['day']
                     addRouteToUser(route)
-            # print("STILL OKAY")
+            print("STILL OKAY")
             populateRoutesMap()
             buildTrie()
             return jsonify({'Response': 'All good!'}),200
